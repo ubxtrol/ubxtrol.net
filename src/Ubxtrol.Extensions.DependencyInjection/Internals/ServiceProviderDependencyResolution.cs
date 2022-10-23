@@ -13,7 +13,7 @@ namespace Ubxtrol.Extensions.DependencyInjection
             if (context == null)
                 throw Error.ArgumentNull(nameof(context));
 
-            context.Result = context.GetLifetimeProvider();
+            context.Result = context.UseServiceProvider();
         }
     }
 }

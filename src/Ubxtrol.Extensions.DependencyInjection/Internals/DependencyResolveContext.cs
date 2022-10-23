@@ -23,7 +23,7 @@ namespace Ubxtrol.Extensions.DependencyInjection
             this.provider = provider;
         }
 
-        public ServiceProvider GetLifetimeProvider()
+        public ServiceProvider UseServiceProvider()
         {
             ServiceProvider result = this.provider;
             if (this.Lifetime.HasValue && this.Lifetime.Value == ServiceLifetime.Singleton)

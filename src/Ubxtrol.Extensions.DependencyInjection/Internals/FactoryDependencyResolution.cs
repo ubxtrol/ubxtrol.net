@@ -11,7 +11,7 @@ namespace Ubxtrol.Extensions.DependencyInjection
             if (context == null)
                 throw Error.ArgumentNull(nameof(context));
 
-            ServiceProvider provider = context.GetLifetimeProvider();
+            ServiceProvider provider = context.UseServiceProvider();
             context.Result = this.method.Invoke(provider);
         }
 
