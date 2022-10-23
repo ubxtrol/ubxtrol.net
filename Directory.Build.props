@@ -1,0 +1,19 @@
+<Project>
+
+  <PropertyGroup>
+    <Authors>Ubrain.NET</Authors>
+    <Copyright>Copyright © Ubrain.NET</Copyright>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryType>GIT</RepositoryType>
+    <RepositoryUrl>https://github.com/ubxtrol/ubxtrol.net</RepositoryUrl>
+    <SharedPath>../Ubxtrol.Shared</SharedPath>
+    <Version>6.0.5</Version>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
+  </PropertyGroup>
+
+</Project>

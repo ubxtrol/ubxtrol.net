@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Ubxtrol.Application</Description>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../Ubxtrol.Extensions.DependencyInjection/Ubxtrol.Extensions.DependencyInjection.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="$(SharedPath)/Error.cs" Link="Shared/Error.cs" />
+  </ItemGroup>
+
+</Project>
