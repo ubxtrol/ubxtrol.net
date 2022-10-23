@@ -2,16 +2,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configuration", "Configuration", "{81EDB962-D0FF-4E2B-9074-E27032FA8C0F}"
-	ProjectSection(SolutionItems) = preProject
-		Directory.Build.props = Directory.Build.props
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ubxtrol.Application", "src/Ubxtrol.Application/Ubxtrol.Application.csproj", "{22BD1AD3-6A83-4EC1-8DF1-DA3F76655DF0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ubxtrol.Application", "./src/Ubxtrol.Application/Ubxtrol.Application.csproj", "{22BD1AD3-6A83-4EC1-8DF1-DA3F76655DF0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ubxtrol.Extensions.DependencyInjection", "src/Ubxtrol.Extensions.DependencyInjection/Ubxtrol.Extensions.DependencyInjection.csproj", "{E85A0D7D-1766-4DE1-86D8-7A0B0038F3BF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ubxtrol.Extensions.DependencyInjection", "./src/Ubxtrol.Extensions.DependencyInjection/Ubxtrol.Extensions.DependencyInjection.csproj", "{E85A0D7D-1766-4DE1-86D8-7A0B0038F3BF}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ubxtrol.Shared", "./src/Ubxtrol.Shared/Ubxtrol.Shared.csproj", "{72EE8458-FF40-41A9-AD2D-F204BB1B919F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ubxtrol.Shared", "src/Ubxtrol.Shared/Ubxtrol.Shared.csproj", "{72EE8458-FF40-41A9-AD2D-F204BB1B919F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

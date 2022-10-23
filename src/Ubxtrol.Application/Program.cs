@@ -1,59 +1,51 @@
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Diagnostics;
 using Ubxtrol.Extensions.DependencyInjection;
 
 namespace Ubxtrol.Application;
 
-internal interface IMyServiceA
+internal class MyServiceA
 { }
 
-internal class MyServiceA : IMyServiceA
+internal class MyServiceB
+{ }
+
+internal abstract class MyServiceC
 {
-    private readonly IServiceProvider provider;
+    [UbxtrolAutowired]
+    public MyServiceA ServiceA { get; private set; }
+}
 
-    public MyServiceA(IServiceProvider provider)
-    {
-        if (provider == null)
-            throw Error.ArgumentNull(nameof(provider));
-
-        this.provider = provider;
-    }
-
-    public void DisplayProviderInformation()
-    {
-        Type result = this.provider.GetType();
-        Console.WriteLine(result.FullName);
-    }
+internal class MyServiceD : MyServiceC
+{
+    [UbxtrolAutowired]
+    public MyServiceB ServiceB { get; private set; }
 }
 
 internal class Program
 {
     public static void Main()
     {
-        ServiceCollection collection = new ServiceCollection();
-        collection.AddSingleton<MyServiceA>();
-        collection.AddSingleton<IMyServiceA>(provider =>
-        {
-            Console.WriteLine("Factory...{0}", provider.GetType().FullName);
-            return provider.GetRequiredService<MyServiceA>();
-        });
+        var collection = new ServiceCollection();
+        //注册MyServiceA...
+        collection.AddTransient<MyServiceA>();
+        //注册MyServiceB...
+        collection.AddTransient<MyServiceB>();
+        //注册MyServiceD...
+        collection.AddTransient<MyServiceD>();
 
-        UbxtrolServiceProvider provider = collection.BuildUbxtrolServiceProvider();
+        //构建ServiceProvider...
+        var provider = collection.BuildUbxtrolServiceProvider();
 
-        using (IServiceScope scope = provider.CreateScope())
-        {
-            MyServiceA a = scope.ServiceProvider.GetRequiredService<MyServiceA>();
-            a.DisplayProviderInformation();
+        //获取MyServiceD实例...
+        var result = provider.GetRequiredService<MyServiceD>();
 
-            _ = scope.ServiceProvider.GetRequiredService<IMyServiceA>();
-        }
+        //将自动注入ServiceA和ServiceB...
+        Debug.Assert(result.ServiceA != null);
+        Debug.Assert(result.ServiceB != null);
 
-        MyServiceA b = provider.GetRequiredService<MyServiceA>();
-        b.DisplayProviderInformation();
-
-        _ = provider.GetRequiredService<IMyServiceA>();
-
-        Console.WriteLine("Press any key to continue...");
+        Console.Write("Press any key to continue...");
         Console.ReadKey();
     }
 }
