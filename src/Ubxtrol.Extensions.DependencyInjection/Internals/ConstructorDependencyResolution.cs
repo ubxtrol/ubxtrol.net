@@ -29,7 +29,12 @@ namespace Ubxtrol.Extensions.DependencyInjection
                 this.properties[index].Resolve(context);
                 properties[index] = context.Result;
             }
-            context.Result = this.creation.Invoke(arguments, properties);
+            object result = this.creation.Invoke(arguments, properties);
+            IUbxtrolPostConstruct construct = result as IUbxtrolPostConstruct;
+            if (construct != null)
+                construct.OnServicesInjected();
+
+            context.Result = result;
         }
 
         public ConstructorDependencyResolution(ServiceIdentity identity, ServiceCreation creation, IDependencyResolution[] arguments, IDependencyResolution[] properties)

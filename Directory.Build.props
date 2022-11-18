@@ -8,7 +8,7 @@
     <RepositoryType>GIT</RepositoryType>
     <RepositoryUrl>https://github.com/ubxtrol/ubxtrol.net</RepositoryUrl>
     <SharedPath>../Ubxtrol.Shared</SharedPath>
-    <Version>6.0.5</Version>
+    <Version>6.0.6</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
