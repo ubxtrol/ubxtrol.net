@@ -19,7 +19,7 @@
     2.  对属性添加`UbxtrolAutowiredAttribute`特性。
 
 -   其他功能使用方法与官方依赖注入框架基本一致。
--   注意：依赖属性将在对象实例创建后注入，因此在对象构造方法中无法访问依赖属性，若要在构造方法中使用依赖，请使用构造方法注入。
+-   注意：依赖属性将在对象实例创建后注入，因此在对象构造方法中无法访问依赖属性，若要在构造方法中使用依赖，请使用构造方法注入或[后期构造](#后期构造)。
 
 ### 示例
 
@@ -167,3 +167,29 @@ internal class MyServiceA
 ```
 
 对特性`UbxtrolAutowired`设置`IgnoreWhenNotFound = true`后，当`MyServiceB`未被注册为服务时，将忽略该属性的注入行为。
+
+#### 后期构造
+
+由于在对象构造方法中无法访问依赖属性, 但有时确实需要在依赖解析完成后执行一些初始化操作, 此时可以使用后期构造。
+
+后期构造只需要服务对象实现`IUbxtrolPostConstruct`接口, 并在`OnServicesInjected`中进行初始化操作即可:
+
+```csharp
+internal class MyServiceA : IUbxtrolPostConstruct
+{
+    [UbxtrolAutowired]
+    public MyServiceB ServiceB { get; private set; }
+
+    //为避免其他地方调用此方法, 可以采用私有实现...
+    void IUbxtrolPostConstruct.OnServicesInjected()
+    {
+        //这里可以安全的访问ServiceB...
+        Debug.Assert(this.ServiceB != null);
+    }
+
+    public MyServiceA()
+    {
+        //这里无法访问ServiceB...
+    }
+}
+```
