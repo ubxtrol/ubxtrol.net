@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <Compile Include="$(SharedPath)/Error.cs" Link="Shared/Error.cs" />
-    <None Remove="./README.md" />
+    <None Remove="README.md" />
   </ItemGroup>
 
 </Project>

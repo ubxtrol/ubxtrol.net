@@ -32,7 +32,7 @@ namespace Ubxtrol.Extensions.DependencyInjection
             this.parameters = parameters;
         }
 
-        public static ConstructorDescription From(ConstructorInfo constructor)
+        public static ConstructorDescription FromConstructor(ConstructorInfo constructor)
         {
             if (constructor == null)
                 throw Error.ArgumentNull(nameof(constructor));

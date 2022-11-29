@@ -153,18 +153,20 @@ namespace Ubxtrol.Extensions.DependencyInjection
             if (descriptor.ImplementationFactory != null)
                 return new FactoryDependencyResolution(identity, descriptor.ImplementationFactory);
 
+            IDependencyResolution result = default;
             chain.ThrowCircularDependencyWith(mServiceType);
             try
             {
                 if (mImplementationType == null)
                     mImplementationType = descriptor.ImplementationType;
 
-                return this.CreateConstructorDependencyResolution(identity, mImplementationType, chain);
+                result = this.CreateConstructorDependencyResolution(identity, mImplementationType, chain);
             }
             finally
             {
                 chain.Remove(mServiceType);
             }
+            return result;
         }
 
         private IDependencyResolution CreateDependencyResolution(Type mServiceType, ServiceDependencyChain chain)
@@ -220,12 +222,13 @@ namespace Ubxtrol.Extensions.DependencyInjection
             ConstructorDescription result = default;
             if (constructors.Length < 0x2)
             {
-                result = ConstructorDescription.From(constructors[0x0]);
+                result = ConstructorDescription.FromConstructor(constructors[0x0]);
                 this.CreateParameterDependencyResolution(result, chain, true);
                 return result;
             }
+
             ISet<Type> mSuperMap = default;
-            IEnumerable<ConstructorDescription> descriptions = constructors.Select(current => ConstructorDescription.From(current));
+            IEnumerable<ConstructorDescription> descriptions = constructors.Select(current => ConstructorDescription.FromConstructor(current));
             foreach (ConstructorDescription current in descriptions.OrderByDescending(x => x.Parameters.Length))
             {
                 this.CreateParameterDependencyResolution(current, chain);
@@ -237,6 +240,7 @@ namespace Ubxtrol.Extensions.DependencyInjection
                     result = current;
                     continue;
                 }
+
                 if (mSuperMap == null)
                     mSuperMap = new HashSet<Type>(result.Parameters.Select(x => x.ParameterType), TypeEqualityComparer.Shared);
 
@@ -266,8 +270,8 @@ namespace Ubxtrol.Extensions.DependencyInjection
             if (validator == null)
                 throw Error.ArgumentNull(nameof(validator));
 
-            this.configuration = configuration;
             this.dependencies = ServiceConfiguration.Initialize();
+            this.configuration = configuration;
             this.validator = validator;
         }
 
