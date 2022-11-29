@@ -6,7 +6,7 @@ namespace Ubxtrol.Extensions.DependencyInjection
     /// <summary>
     /// 服务提供对象实例工厂.
     /// </summary>
-    public class UbxtrolServiceProviderFactory : IServiceProviderFactory<IUbxtrolServiceBuilder>
+    public sealed class UbxtrolServiceProviderFactory : IServiceProviderFactory<IUbxtrolServiceBuilder>
     {
         private readonly UbxtrolServiceProviderOptions options;
 

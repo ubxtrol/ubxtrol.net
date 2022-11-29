@@ -11,16 +11,29 @@ internal class MyServiceA
 internal class MyServiceB
 { }
 
-internal abstract class MyServiceC
+internal abstract class MyServiceC : IUbxtrolPostConstruct
 {
     [UbxtrolAutowired]
     public MyServiceA ServiceA { get; private set; }
+
+    public virtual void OnServicesInjected()
+    {
+        Console.WriteLine("Check `ServiceA` is not null...");
+        Debug.Assert(this.ServiceA != null);
+    }
 }
 
 internal class MyServiceD : MyServiceC
 {
     [UbxtrolAutowired]
     public MyServiceB ServiceB { get; private set; }
+
+    public override void OnServicesInjected()
+    {
+        Console.WriteLine("Check `ServiceB` is not null...");
+        Debug.Assert(this.ServiceB != null);
+        base.OnServicesInjected();
+    }
 }
 
 internal class Program

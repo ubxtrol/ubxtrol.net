@@ -7,7 +7,7 @@ namespace Ubxtrol.Extensions.DependencyInjection
     /// <summary>
     /// 服务提供对象的默认实现.
     /// </summary>
-    public class UbxtrolServiceProvider : IAsyncDisposable, IDisposable, IServiceProvider, ISupportRequiredService
+    public sealed class UbxtrolServiceProvider : IAsyncDisposable, IDisposable, IServiceProvider, ISupportRequiredService
     {
         private readonly ServiceProvider provider;
 

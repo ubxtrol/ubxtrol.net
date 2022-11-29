@@ -3,7 +3,7 @@ namespace Ubxtrol.Extensions.DependencyInjection
     /// <summary>
     /// 服务提供对象配置信息.
     /// </summary>
-    public class UbxtrolServiceProviderOptions
+    public sealed class UbxtrolServiceProviderOptions
     {
         /// <summary>
         /// 获取或设置是否启用服务作用域验证.
