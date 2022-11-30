@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace Ubxtrol.Extensions.DependencyInjection
@@ -30,6 +31,14 @@ namespace Ubxtrol.Extensions.DependencyInjection
             this.constructor = constructor;
             this.dependencies = new List<IDependencyResolution>();
             this.parameters = parameters;
+        }
+
+        public static IEnumerable<ConstructorDescription> FromBatch(IEnumerable<ConstructorInfo> batch)
+        {
+            if (batch is null)
+                throw Error.ArgumentNull(nameof(batch));
+
+            return batch.Select(current => ConstructorDescription.FromConstructor(current));
         }
 
         public static ConstructorDescription FromConstructor(ConstructorInfo constructor)

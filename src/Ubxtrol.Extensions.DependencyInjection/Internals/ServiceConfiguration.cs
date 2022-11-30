@@ -228,8 +228,8 @@ namespace Ubxtrol.Extensions.DependencyInjection
             }
 
             ISet<Type> mSuperMap = default;
-            IEnumerable<ConstructorDescription> descriptions = constructors.Select(current => ConstructorDescription.FromConstructor(current));
-            foreach (ConstructorDescription current in descriptions.OrderByDescending(x => x.Parameters.Length))
+            IEnumerable<ConstructorDescription> batch = ConstructorDescription.FromBatch(constructors);
+            foreach (ConstructorDescription current in batch.OrderByDescending(x => x.Parameters.Length))
             {
                 this.CreateParameterDependencyResolution(current, chain);
                 if (current.UnResolved)

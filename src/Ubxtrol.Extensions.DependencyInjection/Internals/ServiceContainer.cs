@@ -24,11 +24,11 @@ namespace Ubxtrol.Extensions.DependencyInjection
                 if (this.IsDisposed)
                     return result;
 
-                this.IsDisposed = true;
                 foreach (object current in this.disposable)
                     result.Push(current);
 
                 this.disposable.Clear();
+                this.IsDisposed = true;
             }
             return result;
         }
@@ -85,10 +85,13 @@ namespace Ubxtrol.Extensions.DependencyInjection
             if (result == null)
                 return result;
 
+            if (!(result is IAsyncDisposable) && !(result is IDisposable))
+                return result;
+
             lock (this.synchronization)
             {
-                if (!(result is IAsyncDisposable) && !(result is IDisposable))
-                    return result;
+                if (this.IsDisposed)
+                    throw Error.Disposed(nameof(IServiceProvider));
 
                 this.disposable.Add(result);
             }
