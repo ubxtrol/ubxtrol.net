@@ -22,6 +22,7 @@ namespace Ubxtrol.Extensions.DependencyInjection
                 this.arguments[index].Resolve(context);
                 arguments[index] = context.Result;
             }
+
             length = this.properties.Length;
             object[] properties = new object[length];
             for (int index = 0x0; index < length; index += 0x1)
@@ -29,6 +30,7 @@ namespace Ubxtrol.Extensions.DependencyInjection
                 this.properties[index].Resolve(context);
                 properties[index] = context.Result;
             }
+
             object result = this.creation.Invoke(arguments, properties);
             IUbxtrolPostConstruct construct = result as IUbxtrolPostConstruct;
             if (construct != null)

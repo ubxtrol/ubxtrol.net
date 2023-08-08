@@ -1,6 +1,6 @@
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Ubxtrol.Extensions.DependencyInjection
 {
@@ -42,9 +42,6 @@ namespace Ubxtrol.Extensions.DependencyInjection
             return configuration.ContainsKey(definition);
         }
 
-        public bool IsService(Type mServiceType)
-        {
-            return this.IsRegistered(mServiceType);
-        }
+        public bool IsService(Type mServiceType) => this.IsRegistered(mServiceType);
     }
 }

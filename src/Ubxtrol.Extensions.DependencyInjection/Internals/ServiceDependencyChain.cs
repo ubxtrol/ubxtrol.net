@@ -7,10 +7,7 @@ namespace Ubxtrol.Extensions.DependencyInjection
     {
         private readonly ISet<Type> chain;
 
-        public ServiceDependencyChain()
-        {
-            this.chain = new HashSet<Type>(TypeEqualityComparer.Shared);
-        }
+        public ServiceDependencyChain() => this.chain = new HashSet<Type>(TypeEqualityComparer.Shared);
 
         public void Remove(Type mServiceType)
         {

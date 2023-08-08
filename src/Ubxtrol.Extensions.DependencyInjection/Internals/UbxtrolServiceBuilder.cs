@@ -1,6 +1,6 @@
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Ubxtrol.Extensions.DependencyInjection
 {
@@ -10,10 +10,7 @@ namespace Ubxtrol.Extensions.DependencyInjection
 
         private readonly UbxtrolServiceProviderOptions options;
 
-        IServiceProvider IUbxtrolServiceBuilder.BuildServiceProvider()
-        {
-            return this.BuildServiceProvider();
-        }
+        IServiceProvider IUbxtrolServiceBuilder.BuildServiceProvider() => this.BuildServiceProvider();
 
         private UbxtrolServiceBuilder(IReadOnlyDictionary<Type, ServiceRegistration> configuration, UbxtrolServiceProviderOptions options)
         {
@@ -73,6 +70,7 @@ namespace Ubxtrol.Extensions.DependencyInjection
                     if (implementation.IsAbstract || implementation.IsInterface)
                         throw Error.Argument($"泛型实现类型[{implementation}]无法实例化!", nameof(collection));
                 }
+
                 else if (current.ImplementationFactory == null && current.ImplementationInstance == null)
                 {
                     Type implementation = current.ImplementationType;
@@ -82,11 +80,13 @@ namespace Ubxtrol.Extensions.DependencyInjection
                     if (implementation.IsAbstract || implementation.IsInterface)
                         throw Error.Argument($"实现类型[{implementation}]无法实例化!", nameof(collection));
                 }
+
                 if (!configuration.TryGetValue(current.ServiceType, out ServiceRegistration registration))
                     configuration.Add(current.ServiceType, registration = new ServiceRegistration());
 
                 registration.Append(current);
             }
+
             return new UbxtrolServiceBuilder(configuration, options);
         }
     }

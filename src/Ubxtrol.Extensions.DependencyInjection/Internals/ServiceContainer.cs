@@ -8,7 +8,7 @@ namespace Ubxtrol.Extensions.DependencyInjection
     {
         private readonly IDictionary<ServiceKey, object> dependencies;
 
-        private readonly IList<object> disposable;
+        private readonly LinkedList<object> disposable;
 
         private readonly object synchronization;
 
@@ -16,59 +16,58 @@ namespace Ubxtrol.Extensions.DependencyInjection
 
         public object Synchronization => this.synchronization;
 
-        private IReadOnlyCollection<object> ReadyToDispose()
+        private LinkedListNode<object> ReadyToDispose()
         {
-            Stack<object> result = new Stack<object>();
+            LinkedListNode<object> result = null;
             lock (this.synchronization)
             {
                 if (this.IsDisposed)
                     return result;
 
-                foreach (object current in this.disposable)
-                    result.Push(current);
-
-                this.disposable.Clear();
+                result = this.disposable.Last;
                 this.IsDisposed = true;
             }
+
             return result;
         }
 
         public ServiceContainer()
         {
             this.dependencies = new Dictionary<ServiceKey, object>(ServiceKeyEqualityComparer.Shared);
-            this.disposable = new List<object>();
+            this.disposable = new LinkedList<object>();
             this.synchronization = new object();
         }
 
         public void Dispose()
         {
-            IReadOnlyCollection<object> result = this.ReadyToDispose();
-            if (result.Count < 0x1)
-                return;
-
-            foreach (object current in result)
+            LinkedListNode<object> node = this.ReadyToDispose();
+            while (node != null)
             {
-                IDisposable disposable = current as IDisposable;
+                IDisposable disposable = node.Value as IDisposable;
                 if (disposable == null)
                     throw Error.Invalid("部分服务实例仅支持异步释放非托管资源!");
 
-                disposable.Dispose();
+                disposable.Dispose(); node = node.Previous;
             }
+
+            this.disposable.Clear();
         }
 
         public async ValueTask DisposeAsync()
         {
-            IReadOnlyCollection<object> result = this.ReadyToDispose();
-            if (result.Count < 0x1)
-                return;
-
-            foreach (object current in result)
+            LinkedListNode<object> node = this.ReadyToDispose();
+            while (node != null)
             {
+                object current = node.Value;
                 IAsyncDisposable disposable = current as IAsyncDisposable;
                 if (disposable != null)
                     await disposable.DisposeAsync();
                 else (current as IDisposable).Dispose();
+
+                node = node.Previous;
             }
+
+            this.disposable.Clear();
         }
 
         public void Save(ServiceKey key, object value)
@@ -93,8 +92,9 @@ namespace Ubxtrol.Extensions.DependencyInjection
                 if (this.IsDisposed)
                     throw Error.Disposed(nameof(IServiceProvider));
 
-                this.disposable.Add(result);
+                this.disposable.AddLast(result);
             }
+
             return result;
         }
 

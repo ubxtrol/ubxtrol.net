@@ -1,5 +1,5 @@
-using Microsoft.Extensions.DependencyInjection;
 using System;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Ubxtrol.Extensions.DependencyInjection
 {
@@ -18,10 +18,7 @@ namespace Ubxtrol.Extensions.DependencyInjection
         /// <summary>
         /// 初始化一个<see cref="UbxtrolServiceProviderFactory"/>实例.
         /// </summary>
-        public UbxtrolServiceProviderFactory()
-        {
-            this.options = new UbxtrolServiceProviderOptions();
-        }
+        public UbxtrolServiceProviderFactory() => this.options = new UbxtrolServiceProviderOptions();
 
         /// <summary>
         /// 创建一个<see cref="IUbxtrolServiceBuilder"/>实例.

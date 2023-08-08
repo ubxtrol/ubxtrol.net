@@ -1,6 +1,6 @@
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Ubxtrol.Extensions.DependencyInjection
 {
@@ -53,15 +53,9 @@ namespace Ubxtrol.Extensions.DependencyInjection
             : this(configuration, configuration?.Validator)
         { }
 
-        public void Dispose()
-        {
-            this.container.Dispose();
-        }
+        public void Dispose() => this.container.Dispose();
 
-        public ValueTask DisposeAsync()
-        {
-            return this.container.DisposeAsync();
-        }
+        public ValueTask DisposeAsync() => this.container.DisposeAsync();
 
         public object GetRequiredService(Type mServiceType)
         {

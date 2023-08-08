@@ -1,7 +1,7 @@
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Ubxtrol.Extensions.DependencyInjection
 {
@@ -31,6 +31,7 @@ namespace Ubxtrol.Extensions.DependencyInjection
                     this.dependencies.TryAdd(context.ServiceType, identity.Key.Value);
                     break;
             }
+
             this.OnServiceDependencyResolutionCreated(context);
         }
 
@@ -55,10 +56,7 @@ namespace Ubxtrol.Extensions.DependencyInjection
             }
         }
 
-        public StrictServiceScopeValidator()
-        {
-            this.dependencies = new ConcurrentDictionary<Type, Type>(TypeEqualityComparer.Shared);
-        }
+        public StrictServiceScopeValidator() => this.dependencies = new ConcurrentDictionary<Type, Type>(TypeEqualityComparer.Shared);
 
         public void BeforeDependencyResolutionResolved(Type mServiceType)
         {

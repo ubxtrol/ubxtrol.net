@@ -1,6 +1,6 @@
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Ubxtrol.Extensions.DependencyInjection
 {
@@ -18,14 +18,8 @@ namespace Ubxtrol.Extensions.DependencyInjection
             this.provider = provider;
         }
 
-        public void Dispose()
-        {
-            this.provider.Dispose();
-        }
+        public void Dispose() => this.provider.Dispose();
 
-        public ValueTask DisposeAsync()
-        {
-            return this.provider.DisposeAsync();
-        }
+        public ValueTask DisposeAsync() => this.provider.DisposeAsync();
     }
 }

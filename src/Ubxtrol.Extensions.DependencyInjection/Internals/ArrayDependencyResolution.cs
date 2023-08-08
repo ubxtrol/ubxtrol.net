@@ -21,6 +21,7 @@ namespace Ubxtrol.Extensions.DependencyInjection
                 this.dependencies[index].Resolve(context);
                 result.SetValue(context.Result, index);
             }
+
             context.Result = result;
         }
 

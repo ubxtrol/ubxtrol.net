@@ -1,10 +1,10 @@
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Ubxtrol.Extensions.DependencyInjection
 {
@@ -44,8 +44,10 @@ namespace Ubxtrol.Extensions.DependencyInjection
                     dependencies.Push(resolution);
                     index += 0x1;
                 }
+
                 return new ArrayDependencyResolution(identity, result, dependencies.ToArray());
             }
+
             if (!result.IsGenericType)
                 return new ArrayDependencyResolution(identity, result);
 
@@ -69,6 +71,7 @@ namespace Ubxtrol.Extensions.DependencyInjection
                 dependencies.Push(resolution);
                 description = description.Description;
             }
+
             return new ArrayDependencyResolution(identity, result, dependencies.ToArray());
         }
 
@@ -166,6 +169,7 @@ namespace Ubxtrol.Extensions.DependencyInjection
             {
                 chain.Remove(mServiceType);
             }
+
             return result;
         }
 
@@ -209,6 +213,7 @@ namespace Ubxtrol.Extensions.DependencyInjection
                     description.UnResolved = true;
                     break;
                 }
+
                 description.Dependencies.Add(resolution);
             }
         }

@@ -1,5 +1,5 @@
-using Microsoft.Extensions.DependencyInjection;
 using System;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Ubxtrol.Extensions.DependencyInjection
 {
@@ -39,6 +39,7 @@ namespace Ubxtrol.Extensions.DependencyInjection
                         container.TryBlock(context.Result);
                         return;
                 }
+
                 ServiceKey key = this.identity.Key;
                 lock (container.Synchronization)
                 {
@@ -47,6 +48,7 @@ namespace Ubxtrol.Extensions.DependencyInjection
                         context.Result = result;
                         return;
                     }
+
                     this.ExecuteServiceCreation(context);
                     container.Save(key, context.Result);
                 }
