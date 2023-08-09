@@ -40,15 +40,34 @@ namespace Ubxtrol.Extensions.DependencyInjection
             if (disposable == null)
                 return;
 
-            ValueTask item = disposable.DisposeAsync();
-            if (item.IsCompletedSuccessfully)
+            ValueTask result = disposable.DisposeAsync();
+            if (result.IsCompletedSuccessfully)
             {
-                item.GetAwaiter().GetResult();
+                result.GetAwaiter().GetResult();
                 return;
             }
 
-            Task result = item.AsTask();
-            result.GetAwaiter().GetResult();
+            result.AsTask().GetAwaiter().GetResult();
+        }
+
+        private static async ValueTask DestoryAsync(ValueTask input, LinkedNode<object> node)
+        {
+            await input.ConfigureAwait(false);
+            while (node != null)
+            {
+                object current = node.Value;
+                IAsyncDisposable disposable = current as IAsyncDisposable;
+                if (disposable != null)
+                {
+                    ValueTask item = disposable.DisposeAsync();
+                    await item.ConfigureAwait(false);
+                    node = node.Node;
+                    continue;
+                }
+
+                ((IDisposable)current).Dispose();
+                node = node.Node;
+            }
         }
 
         public ServiceContainer()
@@ -77,8 +96,9 @@ namespace Ubxtrol.Extensions.DependencyInjection
             }
         }
 
-        public async ValueTask DisposeAsync()
+        public ValueTask DisposeAsync()
         {
+            ValueTask result = default;
             LinkedNode<object> node = this.DisposeImpl();
             while (node != null)
             {
@@ -87,14 +107,22 @@ namespace Ubxtrol.Extensions.DependencyInjection
                 if (disposable != null)
                 {
                     ValueTask item = disposable.DisposeAsync();
-                    await item.ConfigureAwait(false);
-                    node = node.Node;
-                    continue;
+                    if (item.IsCompletedSuccessfully)
+                    {
+                        item.GetAwaiter().GetResult();
+                        node = node.Node;
+                        continue;
+                    }
+
+                    result = ServiceContainer.DestoryAsync(item, node.Node);
+                    break;
                 }
 
                 ((IDisposable)current).Dispose();
                 node = node.Node;
             }
+
+            return result;
         }
 
         public void Save(ServiceKey key, object value)

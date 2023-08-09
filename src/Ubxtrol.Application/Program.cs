@@ -5,10 +5,10 @@ using Ubxtrol.Extensions.DependencyInjection;
 
 namespace Ubxtrol.Application;
 
-internal class MyServiceA
+internal sealed class MyServiceA
 { }
 
-internal class MyServiceB
+internal sealed class MyServiceB
 { }
 
 internal abstract class MyServiceC : IUbxtrolPostConstruct
@@ -23,7 +23,7 @@ internal abstract class MyServiceC : IUbxtrolPostConstruct
     }
 }
 
-internal class MyServiceD : MyServiceC
+internal sealed class MyServiceD : MyServiceC
 {
     [UbxtrolAutowired]
     public MyServiceB ServiceB { get; private set; }
