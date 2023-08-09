@@ -34,6 +34,23 @@ namespace Ubxtrol.Extensions.DependencyInjection
             return result;
         }
 
+        private static void Destory(object value)
+        {
+            IAsyncDisposable disposable = value as IAsyncDisposable;
+            if (disposable == null)
+                return;
+
+            ValueTask item = disposable.DisposeAsync();
+            if (item.IsCompletedSuccessfully)
+            {
+                item.GetAwaiter().GetResult();
+                return;
+            }
+
+            Task result = item.AsTask();
+            result.GetAwaiter().GetResult();
+        }
+
         public ServiceContainer()
         {
             this.dependencies = new Dictionary<ServiceKey, object>(ServiceKeyEqualityComparer.Shared);
@@ -55,14 +72,7 @@ namespace Ubxtrol.Extensions.DependencyInjection
                     continue;
                 }
 
-                ValueTask item = ((IAsyncDisposable)current).DisposeAsync();
-                if (item.IsCompleted)
-                {
-                    node = node.Node;
-                    continue;
-                }
-
-                item.AsTask().GetAwaiter().GetResult();
+                ServiceContainer.Destory(current);
                 node = node.Node;
             }
         }
@@ -76,7 +86,8 @@ namespace Ubxtrol.Extensions.DependencyInjection
                 IAsyncDisposable disposable = current as IAsyncDisposable;
                 if (disposable != null)
                 {
-                    await disposable.DisposeAsync();
+                    ValueTask item = disposable.DisposeAsync();
+                    await item.ConfigureAwait(false);
                     node = node.Node;
                     continue;
                 }
@@ -103,12 +114,22 @@ namespace Ubxtrol.Extensions.DependencyInjection
             if (!(result is IAsyncDisposable) && !(result is IDisposable))
                 return result;
 
+            bool mIsDisposed = false;
             lock (this.synchronization)
             {
                 if (this.IsDisposed)
-                    throw Error.Disposed(nameof(IServiceProvider));
+                    mIsDisposed = true;
+                else this.disposable.Append(result);
+            }
 
-                this.disposable.Append(result);
+            if (mIsDisposed)
+            {
+                IDisposable disposable = result as IDisposable;
+                if (disposable != null)
+                    disposable.Dispose();
+                else ServiceContainer.Destory(result);
+
+                throw Error.Disposed(nameof(IServiceProvider));
             }
 
             return result;
