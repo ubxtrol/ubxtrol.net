@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <Description>Ubxtrol.Extensions.DependencyInjection</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <TargetFrameworks>net462;net6.0;netstandard2.0;netstandard2.1</TargetFrameworks>
   </PropertyGroup>
 
@@ -16,7 +17,7 @@
   <ItemGroup>
     <Compile Include="$(SharedPath)/Error.cs" Link="Shared/Error.cs" />
     <Compile Include="$(SharedPath)/LinkedBatch.cs" Link="Shared/LinkedBatch.cs" />
-    <None Remove="README.md" />
+    <None Include="README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
 </Project>
