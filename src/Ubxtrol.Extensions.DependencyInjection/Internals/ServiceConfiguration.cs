@@ -25,8 +25,8 @@ namespace Ubxtrol.Extensions.DependencyInjection
         private IDependencyResolution CreateArrayDependencyResolution(Type mServiceType, ServiceDependencyChain chain)
         {
             int index = 0x0;
-            ServiceDescription description = default;
-            Stack<IDependencyResolution> dependencies = default;
+            ServiceDescription description = null;
+            Stack<IDependencyResolution> dependencies = null;
             Type result = mServiceType.GenericTypeArguments.Single();
             ServiceIdentity identity = new ServiceIdentity(0x0, mServiceType);
             if (this.configuration.TryGetValue(result, out ServiceRegistration registration))
@@ -156,7 +156,7 @@ namespace Ubxtrol.Extensions.DependencyInjection
             if (descriptor.ImplementationFactory != null)
                 return new FactoryDependencyResolution(identity, descriptor.ImplementationFactory);
 
-            IDependencyResolution result = default;
+            IDependencyResolution result = null;
             chain.ThrowCircularDependencyWith(mServiceType);
             try
             {
@@ -224,7 +224,7 @@ namespace Ubxtrol.Extensions.DependencyInjection
             if (constructors.Length < 0x1)
                 throw Error.Invalid($"类型[{mImplementationType}]缺少公共构造方法!");
 
-            ConstructorDescription result = default;
+            ConstructorDescription result = null;
             if (constructors.Length < 0x2)
             {
                 result = ConstructorDescription.FromConstructor(constructors[0x0]);
@@ -232,7 +232,7 @@ namespace Ubxtrol.Extensions.DependencyInjection
                 return result;
             }
 
-            ISet<Type> mSuperMap = default;
+            ISet<Type> mSuperMap = null;
             IEnumerable<ConstructorDescription> batch = ConstructorDescription.FromBatch(constructors);
             foreach (ConstructorDescription current in batch.OrderByDescending(x => x.Parameters.Length))
             {
@@ -254,6 +254,7 @@ namespace Ubxtrol.Extensions.DependencyInjection
 
                 throw Error.Invalid($"类型[{mImplementationType}]包含多个不明确的构造方法!");
             }
+
             return result;
         }
 
