@@ -16,7 +16,11 @@
 
   <ItemGroup>
     <Compile Include="$(SharedPath)/Error.cs" Link="Shared/Error.cs" />
-    <Compile Include="$(SharedPath)/LinkedBatch.cs" Link="Shared/LinkedBatch.cs" />
+    <Compile Include="$(SharedPath)/StackBatch.cs" Link="Shared/StackBatch.cs" />
+    <Compile Include="$(SharedPath)/StackComponent.cs" Link="Shared/StackComponent.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 

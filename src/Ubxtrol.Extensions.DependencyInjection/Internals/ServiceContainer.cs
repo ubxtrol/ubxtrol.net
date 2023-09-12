@@ -8,7 +8,7 @@ namespace Ubxtrol.Extensions.DependencyInjection
     {
         private readonly IDictionary<ServiceKey, object> dependencies;
 
-        private readonly LinkedBatch<object> disposable;
+        private readonly StackBatch<Destroyable> disposable;
 
         private readonly object synchronization;
 
@@ -16,113 +16,52 @@ namespace Ubxtrol.Extensions.DependencyInjection
 
         public object Synchronization => this.synchronization;
 
-        private LinkedNode<object> DisposeImpl()
+        private StackComponent<Destroyable> DisposeImpl()
         {
-            LinkedNode<object> result = null;
+            StackComponent<Destroyable> result = null;
             lock (this.synchronization)
             {
                 if (this.IsDisposed)
                     return result;
 
-                result = this.disposable.Node;
-                if (result != null)
-                    this.disposable.Discard();
-
+                result = this.disposable.Component;
                 this.IsDisposed = true;
             }
 
             return result;
         }
 
-        private static void Destory(object value)
-        {
-            IAsyncDisposable disposable = value as IAsyncDisposable;
-            if (disposable == null)
-                return;
-
-            ValueTask result = disposable.DisposeAsync();
-            if (result.IsCompletedSuccessfully)
-            {
-                result.GetAwaiter().GetResult();
-                return;
-            }
-
-            result.AsTask().GetAwaiter().GetResult();
-        }
-
-        private static async ValueTask DestoryAsync(ValueTask input, LinkedNode<object> node)
-        {
-            await input.ConfigureAwait(false);
-            while (node != null)
-            {
-                object current = node.Value;
-                IAsyncDisposable disposable = current as IAsyncDisposable;
-                if (disposable != null)
-                {
-                    ValueTask item = disposable.DisposeAsync();
-                    await item.ConfigureAwait(false);
-                    node = node.Node;
-                    continue;
-                }
-
-                ((IDisposable)current).Dispose();
-                node = node.Node;
-            }
-        }
-
         public ServiceContainer()
         {
             this.dependencies = new Dictionary<ServiceKey, object>(ServiceKeyEqualityComparer.Shared);
-            this.disposable = new LinkedBatch<object>();
+            this.disposable = new StackBatch<Destroyable>();
             this.synchronization = new object();
         }
 
         public void Dispose()
         {
-            LinkedNode<object> node = this.DisposeImpl();
-            while (node != null)
+            StackComponent<Destroyable> component = this.DisposeImpl();
+            while (component != null)
             {
-                object current = node.Value;
-                IDisposable disposable = current as IDisposable;
-                if (disposable != null)
-                {
-                    disposable.Dispose();
-                    node = node.Node;
-                    continue;
-                }
-
-                ServiceContainer.Destory(current);
-                node = node.Node;
+                Destroyable current = component.Value;
+                component = component.Component;
+                current.Dispose();
             }
+
+            this.disposable.Discard();
         }
 
-        public ValueTask DisposeAsync()
+        public async ValueTask DisposeAsync()
         {
-            ValueTask result = default;
-            LinkedNode<object> node = this.DisposeImpl();
-            while (node != null)
+            StackComponent<Destroyable> component = this.DisposeImpl();
+            while (component != null)
             {
-                object current = node.Value;
-                IAsyncDisposable disposable = current as IAsyncDisposable;
-                if (disposable != null)
-                {
-                    ValueTask item = disposable.DisposeAsync();
-                    if (item.IsCompletedSuccessfully)
-                    {
-                        item.GetAwaiter().GetResult();
-                        node = node.Node;
-                        continue;
-                    }
-
-                    result = ServiceContainer.DestoryAsync(item, node.Node);
-                    break;
-                }
-
-                ((IDisposable)current).Dispose();
-                node = node.Node;
+                Destroyable current = component.Value;
+                component = component.Component;
+                await current.DisposeAsync();
             }
 
-            return result;
+            this.disposable.Discard();
         }
 
         public void Save(ServiceKey key, object value)
@@ -139,25 +78,16 @@ namespace Ubxtrol.Extensions.DependencyInjection
             if (result == null)
                 return result;
 
-            if (!(result is IAsyncDisposable) && !(result is IDisposable))
+            Destroyable destroyable = Destroyable.From(result);
+            if (destroyable == null)
                 return result;
 
-            bool mIsDisposed = false;
             lock (this.synchronization)
             {
                 if (this.IsDisposed)
-                    mIsDisposed = true;
-                else this.disposable.Append(result);
-            }
+                    Destroyable.ThrowDisposed(destroyable);
 
-            if (mIsDisposed)
-            {
-                IDisposable disposable = result as IDisposable;
-                if (disposable != null)
-                    disposable.Dispose();
-                else ServiceContainer.Destory(result);
-
-                throw Error.Disposed(nameof(IServiceProvider));
+                this.disposable.Push(destroyable);
             }
 
             return result;
