@@ -34,7 +34,7 @@ namespace Ubxtrol.Extensions.DependencyInjection
             if (result.IsCompletedSuccessfully)
                 return;
 
-            result.GetAwaiter().GetResult();
+            result.AsTask().GetAwaiter().GetResult();
         }
 
         public ValueTask DisposeAsync()

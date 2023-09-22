@@ -16,9 +16,9 @@ namespace Ubxtrol.Extensions.DependencyInjection
 
         public object Synchronization => this.synchronization;
 
-        private StackComponent<Destroyable> DisposeImpl()
+        private IStackComponent<Destroyable> DisposeImpl()
         {
-            StackComponent<Destroyable> result = null;
+            IStackComponent<Destroyable> result = null;
             lock (this.synchronization)
             {
                 if (this.IsDisposed)
@@ -40,7 +40,7 @@ namespace Ubxtrol.Extensions.DependencyInjection
 
         public void Dispose()
         {
-            StackComponent<Destroyable> component = this.DisposeImpl();
+            IStackComponent<Destroyable> component = this.DisposeImpl();
             while (component != null)
             {
                 Destroyable current = component.Value;
@@ -53,12 +53,17 @@ namespace Ubxtrol.Extensions.DependencyInjection
 
         public async ValueTask DisposeAsync()
         {
-            StackComponent<Destroyable> component = this.DisposeImpl();
+            IStackComponent<Destroyable> component = this.DisposeImpl();
             while (component != null)
             {
                 Destroyable current = component.Value;
                 component = component.Component;
-                await current.DisposeAsync();
+
+                ValueTask item = current.DisposeAsync();
+                if (item.IsCompletedSuccessfully)
+                    continue;
+
+                await item.ConfigureAwait(false);
             }
 
             this.disposable.Discard();

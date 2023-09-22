@@ -1,10 +1,10 @@
-namespace Ubxtrol
+namespace System
 {
-    internal class StackComponent<T>
+    internal class StackComponent<T> : IStackComponent<T>
     {
         private readonly T value;
 
-        public StackComponent<T> Component { get; set; }
+        public IStackComponent<T> Component { get; set; }
 
         public T Value => this.value;
 

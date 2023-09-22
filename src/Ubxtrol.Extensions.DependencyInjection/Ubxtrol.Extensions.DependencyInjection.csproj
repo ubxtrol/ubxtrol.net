@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <Compile Include="$(SharedPath)/Error.cs" Link="Shared/Error.cs" />
+    <Compile Include="$(SharedPath)/IStackComponent.cs" Link="Shared/IStackComponent.cs" />
     <Compile Include="$(SharedPath)/StackBatch.cs" Link="Shared/StackBatch.cs" />
     <Compile Include="$(SharedPath)/StackComponent.cs" Link="Shared/StackComponent.cs" />
   </ItemGroup>
